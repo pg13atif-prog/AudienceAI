@@ -361,7 +361,3 @@ export const Columns = createIcon(
     <path d="M12 3v18"/>
   </>
 );
-
-
-
-

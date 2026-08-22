@@ -1,0 +1,364 @@
+/* =========================================================================
+   Simple Analysis View - Symmetrical Executive Dashboard
+   ========================================================================= */
+
+.simple-analysis-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.25s ease-out;
+  width: 100%;
+}
+
+/* ── Top Row: 2 Symmetrical Hero Cards ───────────────────────────────────── */
+.simple-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.simple-hero-card {
+  padding: 22px 24px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-medium);
+  background: linear-gradient(135deg, rgba(22, 27, 40, 0.95) 0%, rgba(12, 15, 24, 0.95) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 210px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), var(--glow-subtle);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.simple-hero-card.card-verdict {
+  border-left: 4px solid var(--accent-amber);
+}
+
+.simple-hero-card.card-recommendation {
+  border-left: 4px solid var(--persona-emotional);
+}
+
+.simple-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.simple-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.simple-sub-badge {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 7px;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+}
+
+.simple-score-pill {
+  display: flex;
+  align-items: baseline;
+  background: rgba(8, 9, 13, 0.85);
+  border: 1px solid var(--border-medium);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  gap: 2px;
+}
+
+.simple-score-num {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--accent-amber);
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.simple-score-denom {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.simple-kept-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.simple-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.simple-hero-title {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+.simple-hero-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.simple-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  gap: 10px;
+}
+
+.simple-sentiment-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sentiment-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.sentiment-pill.pill-pos {
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+  color: #a7f3d0;
+}
+
+.sentiment-pill.pill-neutral {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #c7d2fe;
+}
+
+.simple-action-footer {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.simple-remix-btn {
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+/* ── Bottom Row: 4 Symmetrical Persona Scorecards ─────────────────────────── */
+.simple-personas-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.simple-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.simple-section-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.simple-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.simple-section-subtitle {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.simple-section-pill {
+  font-size: 10.5px;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+}
+
+.simple-personas-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.simple-persona-card {
+  padding: 16px 16px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-medium);
+  background: rgba(14, 18, 28, 0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.simple-persona-card:hover {
+  transform: translateY(-3px);
+  background: rgba(20, 25, 40, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.4), var(--glow-subtle);
+}
+
+.card-border-casual { border-top: 3px solid var(--persona-casual); }
+.card-border-critic { border-top: 3px solid var(--persona-critic); }
+.card-border-lore { border-top: 3px solid var(--persona-lore); }
+.card-border-emotional { border-top: 3px solid var(--persona-emotional); }
+
+.persona-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.persona-card-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-casual { background: var(--persona-casual-bg); color: var(--persona-casual); }
+.avatar-critic { background: var(--persona-critic-bg); color: var(--persona-critic); }
+.avatar-lore { background: var(--persona-lore-bg); color: var(--persona-lore); }
+.avatar-emotional { background: var(--persona-emotional-bg); color: var(--persona-emotional); }
+
+.persona-card-meta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.persona-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.persona-card-role {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.persona-card-score {
+  font-size: 18px;
+  font-weight: 900;
+  font-family: var(--font-mono);
+  line-height: 1;
+}
+
+.persona-card-meter {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.persona-meter-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease-out;
+}
+
+.persona-card-quote {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+  min-height: 32px;
+}
+
+.persona-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 6px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.inspect-link {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.simple-persona-card:hover .inspect-link {
+  color: var(--accent-amber);
+  transform: translateX(2px);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .simple-personas-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .simple-hero-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .simple-personas-grid {
+    grid-template-columns: 1fr;
+  }
+  .simple-hero-card {
+    padding: 16px;
+  }
+}

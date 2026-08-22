@@ -34,10 +34,12 @@ import LiveReactionFeed from '../../components/Simulation/LiveReactionFeed';
 import PersonaBreakdown from '../../components/Simulation/PersonaBreakdown';
 import PersonaDetailModal from '../../components/Simulation/PersonaDetailModal';
 import AudienceInsightCard from '../../components/Insights/AudienceInsightCard';
+import SimpleAnalysisView from '../../components/Simulation/SimpleAnalysisView';
 import SceneRemixModal from '../../components/Remix/SceneRemixModal';
 import ApiKeyModal from '../../components/Common/ApiKeyModal';
 import { AUDIENCE_PERSONAS, getDefaultPersonaIds } from '../../data/personas';
 import { geminiService } from '../../services/geminiService';
+import { Zap } from '../../components/Common/Icons';
 import { apiKeyService } from '../../services/apiKeyService';
 import { consensusService } from '../../services/consensusService';
 import { problemDetectionService } from '../../services/problemDetectionService';
@@ -75,6 +77,9 @@ export default function Simulation({
   // Tabbed view state for results (minimal scrolling)
   const [resultsTab, setResultsTab] = useState('overview'); // 'overview' | 'personas' | 'feed'
   const [selectedPersonaTabId, setSelectedPersonaTabId] = useState(null);
+
+  // Results analysis mode (Simple vs Detailed)
+  const [analysisMode, setAnalysisMode] = useState('simple'); // 'simple' | 'detailed'
 
   // Modals & UI states
   const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState(false);
@@ -477,6 +482,29 @@ export default function Simulation({
             </div>
 
             <div className="results-nav-actions">
+              {resultsTab === 'overview' && (
+                <div className="analysis-mode-segmented-toggle">
+                  <button
+                    type="button"
+                    className={`mode-segment-btn ${analysisMode === 'simple' ? 'active' : ''}`}
+                    onClick={() => setAnalysisMode('simple')}
+                    title="Switch to clean executive-level overview"
+                  >
+                    <Zap size={13} />
+                    <span>Simple Analysis</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`mode-segment-btn ${analysisMode === 'detailed' ? 'active' : ''}`}
+                    onClick={() => setAnalysisMode('detailed')}
+                    title="Switch to in-depth surgical diagnostic breakdown"
+                  >
+                    <Sliders size={13} />
+                    <span>Detailed Analysis</span>
+                  </button>
+                </div>
+              )}
+
               <Button
                 variant="secondary"
                 size="sm"
@@ -499,47 +527,76 @@ export default function Simulation({
           {/* TAB 1: OVERVIEW & DIAGNOSTICS */}
           {resultsTab === 'overview' && (
             <div className="sim-tab-overview-container">
-              {/* 1. Full-Width Top Consensus Banner */}
-              {consensusData && (
-                <ConsensusBanner consensusData={consensusData} />
-              )}
-
-              {/* 2. Side-by-Side Balanced Split Grid */}
-              <div className="sim-overview-split-grid">
-                {/* Left Column: Problem Diagnosis Card */}
-                <div className="overview-diag-col">
-                  {problemDiagnosis && (
-                    <AudienceInsightCard
-                      diagnosis={problemDiagnosis}
-                      onImproveScene={() => setIsRemixModalOpen(true)}
-                      onKeepScene={async () => {
-                        if (activeScene && onUpdateScene) {
-                          const updated = {
-                            ...activeScene,
-                            status: 'Completed',
-                            acceptedByCreator: true,
-                            updatedAt: new Date().toISOString()
-                          };
-                          await onUpdateScene(updated);
-                        }
-                      }}
-                      onReSimulate={handleStartSimulation}
-                    />
+              {analysisMode === 'simple' ? (
+                /* Symmetrical Simple Analysis View */
+                <SimpleAnalysisView
+                  consensusData={consensusData}
+                  problemDiagnosis={problemDiagnosis}
+                  simResults={simResults}
+                  onImproveScene={() => setIsRemixModalOpen(true)}
+                  onKeepScene={async () => {
+                    if (activeScene && onUpdateScene) {
+                      const updated = {
+                        ...activeScene,
+                        status: 'Completed',
+                        acceptedByCreator: true,
+                        updatedAt: new Date().toISOString()
+                      };
+                      await onUpdateScene(updated);
+                    }
+                  }}
+                  onReSimulate={handleStartSimulation}
+                  onSelectPersona={(personaId) => {
+                    setSelectedPersonaTabId(personaId);
+                    setResultsTab('personas');
+                  }}
+                />
+              ) : (
+                /* Detailed Surgical Diagnostic View */
+                <>
+                  {/* 1. Full-Width Top Consensus Banner */}
+                  {consensusData && (
+                    <ConsensusBanner consensusData={consensusData} />
                   )}
-                </div>
 
-                {/* Right Column: Persona Viewpoint Breakdown */}
-                <div className="overview-breakdown-col">
-                  <PersonaBreakdown
-                    personaRankings={consensusData?.personaRankings || []}
-                    selectedPersonaId={selectedPersonaTabId}
-                    onSelectPersona={(personaId) => {
-                      setSelectedPersonaTabId(personaId);
-                      setResultsTab('personas');
-                    }}
-                  />
-                </div>
-              </div>
+                  {/* 2. Side-by-Side Balanced Split Grid */}
+                  <div className="sim-overview-split-grid">
+                    {/* Left Column: Problem Diagnosis Card */}
+                    <div className="overview-diag-col">
+                      {problemDiagnosis && (
+                        <AudienceInsightCard
+                          diagnosis={problemDiagnosis}
+                          onImproveScene={() => setIsRemixModalOpen(true)}
+                          onKeepScene={async () => {
+                            if (activeScene && onUpdateScene) {
+                              const updated = {
+                                ...activeScene,
+                                status: 'Completed',
+                                acceptedByCreator: true,
+                                updatedAt: new Date().toISOString()
+                              };
+                              await onUpdateScene(updated);
+                            }
+                          }}
+                          onReSimulate={handleStartSimulation}
+                        />
+                      )}
+                    </div>
+
+                    {/* Right Column: Persona Viewpoint Breakdown */}
+                    <div className="overview-breakdown-col">
+                      <PersonaBreakdown
+                        personaRankings={consensusData?.personaRankings || []}
+                        selectedPersonaId={selectedPersonaTabId}
+                        onSelectPersona={(personaId) => {
+                          setSelectedPersonaTabId(personaId);
+                          setResultsTab('personas');
+                        }}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
