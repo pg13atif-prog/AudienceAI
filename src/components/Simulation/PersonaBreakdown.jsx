@@ -1,10 +1,9 @@
 import React from 'react';
-import { Film, Feather, Compass, Heart, Sparkles, ChevronRight, Sliders } from '../Common/Icons';
+import { Film, Feather, Compass, Heart, Sparkles, ChevronRight } from '../Common/Icons';
 import './PersonaBreakdown.css';
 
 /**
- * Persona Score Breakdown List
- * Displays comparative ratings across personas and triggers detailed inspection
+ * Decluttered Persona Score Breakdown List
  * @param {Object} props
  * @param {Array<Object>} props.personaRankings
  * @param {string} [props.selectedPersonaId]
@@ -35,10 +34,9 @@ export default function PersonaBreakdown({
     <div className="persona-breakdown-card glass-panel">
       <div className="breakdown-header">
         <div>
-          <h3 className="breakdown-title">Persona Viewpoint Breakdown</h3>
+          <h3 className="breakdown-title">Persona Viewpoints</h3>
           <span className="breakdown-subtitle">Comparative audience reception</span>
         </div>
-        <span className="breakdown-disclaimer">Simulated Audience</span>
       </div>
 
       <div className="breakdown-list">
@@ -53,7 +51,7 @@ export default function PersonaBreakdown({
               onClick={() => onSelectPersona?.(p.id)}
               role="button"
               tabIndex={0}
-              title={`Click to inspect ${p.name}'s full deep-dive diagnostic`}
+              title={`Click to inspect ${p.name}'s critique`}
             >
               <div className="breakdown-item-left">
                 <div className={`breakdown-avatar-box avatar-${p.colorKey || 'casual'}`}>
@@ -71,7 +69,7 @@ export default function PersonaBreakdown({
                 <div className="breakdown-gauge-wrapper">
                   <div className="breakdown-track">
                     <div 
-                      className="breakdown-fill"
+                      className="breakdown-fill" 
                       style={{ width: `${p.score}%`, background: scoreColor }}
                     />
                   </div>

@@ -454,7 +454,7 @@ export default function Simulation({
                 onClick={() => setResultsTab('overview')}
               >
                 <Sparkles size={14} />
-                <span>Overview & Diagnostics</span>
+                <span>Overview</span>
               </button>
 
               <button
@@ -468,7 +468,7 @@ export default function Simulation({
                 }}
               >
                 <Users size={14} />
-                <span>Persona Deep Dives ({simResults?.length || 0})</span>
+                <span>Persona Critiques ({simResults?.length || 0})</span>
               </button>
 
               <button
@@ -477,7 +477,7 @@ export default function Simulation({
                 onClick={() => setResultsTab('feed')}
               >
                 <Clock size={14} />
-                <span>Live Reaction Feed</span>
+                <span>Live Feed</span>
               </button>
             </div>
 
@@ -488,30 +488,31 @@ export default function Simulation({
                     type="button"
                     className={`mode-segment-btn ${analysisMode === 'simple' ? 'active' : ''}`}
                     onClick={() => setAnalysisMode('simple')}
-                    title="Switch to clean executive-level overview"
+                    title="Executive simple view"
                   >
-                    <Zap size={13} />
-                    <span>Simple Analysis</span>
+                    <Zap size={12} />
+                    <span>Simple</span>
                   </button>
                   <button
                     type="button"
                     className={`mode-segment-btn ${analysisMode === 'detailed' ? 'active' : ''}`}
                     onClick={() => setAnalysisMode('detailed')}
-                    title="Switch to in-depth surgical diagnostic breakdown"
+                    title="In-depth detailed diagnostic view"
                   >
-                    <Sliders size={13} />
-                    <span>Detailed Analysis</span>
+                    <Sliders size={12} />
+                    <span>Detailed</span>
                   </button>
                 </div>
               )}
 
               <Button
-                variant="secondary"
+                variant="primary"
                 size="sm"
-                icon={<Sparkles size={13} className="text-amber" />}
+                icon={<Sparkles size={13} />}
                 onClick={() => setIsRemixModalOpen(true)}
+                className="nav-remix-btn"
               >
-                AI Scene Remix
+                AI Remix
               </Button>
               <Button
                 variant="secondary"

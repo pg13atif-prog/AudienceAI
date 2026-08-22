@@ -1,35 +1,33 @@
 .audience-insight-card {
-  padding: 18px 22px;
-  border-radius: var(--radius-xl);
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-medium);
-  border-left: 4px solid var(--accent-amber);
-  background: linear-gradient(135deg, rgba(22, 27, 40, 0.95) 0%, rgba(12, 15, 24, 0.95) 100%);
+  background: rgba(14, 18, 28, 0.9);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), var(--glow-subtle);
-  animation: fadeIn 0.25s ease-out;
-  min-width: 0;
+  gap: 14px;
+  border-left: 3px solid var(--persona-emotional);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   height: 100%;
+  justify-content: space-between;
 }
 
 .insight-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .insight-header-badges {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
-.insight-disclaimer {
-  font-size: 10px;
+.insight-category-pill {
+  font-size: 10.5px;
+  font-weight: 600;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
@@ -38,7 +36,7 @@
   font-family: var(--font-mono);
 }
 
-.scene-approved-pill {
+.scene-approved-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -51,272 +49,107 @@
   font-weight: 600;
 }
 
-/* Primary Issue Block */
 .insight-primary-issue-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.primary-issue-title-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-.issue-warning-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.primary-issue-text-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.primary-issue-category-label {
-  font-size: 9.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent-amber);
+  gap: 6px;
 }
 
 .primary-issue-heading {
-  font-size: 15px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.35;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
-/* Why It Matters Callout */
-.why-it-matters-box {
-  background: rgba(8, 9, 13, 0.65);
-  border: 1px solid var(--border-subtle);
-  border-left: 3px solid #818cf8;
-  border-radius: var(--radius-md);
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.why-it-matters-label {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 9.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #a5b4fc;
+  letter-spacing: -0.01em;
 }
 
 .why-it-matters-text {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-secondary);
-  line-height: 1.4;
-  word-break: break-word;
-  overflow-wrap: break-word;
+  line-height: 1.45;
 }
 
-/* Noticing Personas Supporting Evidence - Compact Grid */
-.noticing-personas-block {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.section-label {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
-.noticing-personas-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 6px;
-}
-
-.noticing-persona-chip {
-  padding: 6px 10px;
+.insight-recommendation-box {
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: var(--radius-md);
-  background: rgba(8, 9, 13, 0.55);
-  border: 1px solid var(--border-subtle);
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.chip-casual { border-left: 3px solid var(--persona-casual); }
-.chip-critic { border-left: 3px solid var(--persona-critic); }
-.chip-lore { border-left: 3px solid var(--persona-lore); }
-.chip-emotional { border-left: 3px solid var(--persona-emotional); }
-
-.noticing-persona-head {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.persona-chip-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.noticing-persona-name {
-  font-size: 10.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.noticing-persona-quote {
-  font-size: 10.5px;
-  color: var(--text-muted);
-  line-height: 1.3;
-  font-style: italic;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
-/* Suggested Improvement Block */
-.suggested-improvement-block {
-  background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%);
-  border: 1px solid rgba(245, 158, 11, 0.25);
-  border-radius: var(--radius-md);
-  padding: 9px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.improvement-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.improvement-title {
-  font-size: 10.5px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--accent-amber);
-}
-
-.improvement-scope-tag {
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: rgba(245, 158, 11, 0.18);
-  color: #fbbf24;
-  padding: 1px 6px;
-  border-radius: 9999px;
-  margin-left: auto;
-}
-
-.improvement-text {
-  font-size: 11.5px;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.4;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
-/* Strengths Block */
-.insight-strengths-block {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.strengths-tags-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-}
-
-.strength-pill {
-  display: inline-flex;
-  align-items: center;
   gap: 4px;
-  background: rgba(52, 211, 153, 0.08);
-  border: 1px solid rgba(52, 211, 153, 0.22);
-  color: #a7f3d0;
-  padding: 3px 7px;
-  border-radius: var(--radius-md);
-  font-size: 10.5px;
-  font-weight: 500;
 }
 
-/* Actions Footer */
-.insight-actions-footer {
+.recommendation-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-subtle);
+  gap: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.recommendation-text {
+  font-size: 12px;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.noticing-personas-strip {
+  display: flex;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: auto;
 }
 
-.footer-guidance {
-  font-size: 10.5px;
-  color: var(--text-muted);
+.noticing-strip-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
 }
 
-.creator-action-buttons {
+.noticing-pills-row {
   display: flex;
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
 }
 
-.improve-scene-cta {
-  font-weight: 700;
-  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+.noticing-persona-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
 }
 
-@media (max-width: 640px) {
-  .audience-insight-card {
-    padding: 14px 16px;
-  }
-  .noticing-personas-grid {
-    grid-template-columns: 1fr;
-  }
-  .insight-actions-footer {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .creator-action-buttons {
-    flex-direction: column;
-  }
-  .creator-action-buttons button {
-    width: 100%;
-  }
+.noticing-persona-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badge-casual .dot { background: var(--persona-casual); }
+.badge-critic .dot { background: var(--persona-critic); }
+.badge-lore .dot { background: var(--persona-lore); }
+.badge-emotional .dot { background: var(--persona-emotional); }
+
+.insight-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.remix-cta-btn {
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
 }
