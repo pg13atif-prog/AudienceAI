@@ -1,0 +1,122 @@
+.aai-topnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  background: rgba(20, 20, 20, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  margin-bottom: 24px;
+}
+
+.aai-topnav__left {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.aai-topnav__link {
+  background: none;
+  border: none;
+  color: #a3a3a3; /* Inactive grey */
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aai-topnav__link:hover {
+  color: #e5e5e5;
+}
+
+.aai-topnav__link--active {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.aai-topnav__active-bubble {
+  position: absolute;
+  bottom: -10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1.5px solid #ef4444;
+  box-shadow: 0 0 8px 1px rgba(239, 68, 68, 0.6), inset 0 0 4px rgba(239, 68, 68, 0.4);
+}
+
+.aai-topnav__right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.aai-topnav__bell {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.aai-topnav__bell:hover {
+  color: var(--text-primary);
+}
+
+.aai-topnav__bell-indicator {
+  position: absolute;
+  top: 4px;
+  right: 5px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1.5px solid #ef4444;
+  box-shadow: 0 0 8px 1px rgba(239, 68, 68, 0.6), inset 0 0 4px rgba(239, 68, 68, 0.4);
+}
+
+.aai-topnav__profile {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.aai-topnav__profile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aai-topnav__upgrade {
+  background: transparent;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  border-radius: 9999px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 16px 2px rgba(239, 68, 68, 0.4), inset 0 0 8px rgba(239, 68, 68, 0.3);
+  transition: all 0.2s;
+}
+
+.aai-topnav__upgrade:hover {
+  background: rgba(239, 68, 68, 0.1);
+  box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.5), inset 0 0 12px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
