@@ -17,11 +17,11 @@ export default function PersonaBreakdown({
 }) {
   const getPersonaIcon = (iconName) => {
     switch (iconName) {
-      case 'Film': return <Film size={16} />;
-      case 'Feather': return <Feather size={16} />;
-      case 'Compass': return <Compass size={16} />;
-      case 'Heart': return <Heart size={16} />;
-      default: return <Sparkles size={16} />;
+      case 'Film': return <Film size={15} />;
+      case 'Feather': return <Feather size={15} />;
+      case 'Compass': return <Compass size={15} />;
+      case 'Heart': return <Heart size={15} />;
+      default: return <Sparkles size={15} />;
     }
   };
 
@@ -53,7 +53,7 @@ export default function PersonaBreakdown({
               onClick={() => onSelectPersona?.(p.id)}
               role="button"
               tabIndex={0}
-              title={`Click to inspect ${p.name}'s detailed critique`}
+              title={`Click to inspect ${p.name}'s full deep-dive diagnostic`}
             >
               <div className="breakdown-item-left">
                 <div className={`breakdown-avatar-box avatar-${p.colorKey || 'casual'}`}>
@@ -61,7 +61,9 @@ export default function PersonaBreakdown({
                 </div>
                 <div className="breakdown-info">
                   <span className="breakdown-name">{p.name}</span>
-                  <span className="breakdown-preview">{p.keyIssue}</span>
+                  {p.keyIssue && (
+                    <span className="breakdown-preview">{p.keyIssue}</span>
+                  )}
                 </div>
               </div>
 

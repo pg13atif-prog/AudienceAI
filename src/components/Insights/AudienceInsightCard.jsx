@@ -75,12 +75,12 @@ export default function AudienceInsightCard({
       <div className="insight-primary-issue-block">
         <div className="primary-issue-title-row">
           <div className="issue-warning-icon-box">
-            <AlertCircle size={22} className="text-amber" />
+            <AlertCircle size={20} className="text-amber" />
           </div>
-          <div>
+          <div className="primary-issue-text-wrap">
             <span className="primary-issue-category-label">Primary Issue Detected:</span>
             <h2 className="primary-issue-heading">
-              {diagnosis.primaryCategory} — {diagnosis.primaryIssueSummary}
+              {diagnosis.primaryCategory} — {diagnosis.craftSummary || diagnosis.primaryIssueSummary}
             </h2>
           </div>
         </div>
@@ -88,7 +88,7 @@ export default function AudienceInsightCard({
         {/* Why It Matters Callout */}
         <div className="why-it-matters-box">
           <div className="why-it-matters-label">
-            <Info size={14} className="text-indigo" />
+            <Info size={13} className="text-indigo" />
             <span>Why it matters for audience engagement:</span>
           </div>
           <p className="why-it-matters-text">
@@ -97,7 +97,7 @@ export default function AudienceInsightCard({
         </div>
       </div>
 
-      {/* Noticing Personas Supporting Evidence */}
+      {/* Noticing Personas Supporting Evidence (Compact Horizontal/2-Col Layout) */}
       {diagnosis.noticingPersonas && diagnosis.noticingPersonas.length > 0 && (
         <div className="noticing-personas-block">
           <span className="section-label">
@@ -106,18 +106,21 @@ export default function AudienceInsightCard({
           <div className="noticing-personas-grid">
             {diagnosis.noticingPersonas.map((p, idx) => (
               <div key={p.personaId || idx} className={`noticing-persona-chip chip-${p.colorKey || 'casual'}`}>
-                <span className="noticing-persona-name">{p.personaName}:</span>
-                <span className="noticing-persona-quote">"{p.quote}"</span>
+                <div className="noticing-persona-head">
+                  <span className="persona-chip-dot" />
+                  <span className="noticing-persona-name">{p.personaName}</span>
+                </div>
+                <p className="noticing-persona-quote">"{p.quote}"</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Suggested Actionable Improvement (Surgical, not full rewrite) */}
+      {/* Suggested Actionable Improvement */}
       <div className="suggested-improvement-block">
         <div className="improvement-header">
-          <Sparkles size={16} className="text-amber" />
+          <Sparkles size={15} className="text-amber" />
           <span className="improvement-title">Suggested Improvement:</span>
           <span className="improvement-scope-tag">Targeted Revision</span>
         </div>
@@ -126,7 +129,7 @@ export default function AudienceInsightCard({
         </p>
       </div>
 
-      {/* Validated Story Strengths (Balancing feedback) */}
+      {/* Validated Story Strengths */}
       {diagnosis.topStrengths && diagnosis.topStrengths.length > 0 && (
         <div className="insight-strengths-block">
           <span className="section-label text-emerald">
@@ -135,7 +138,7 @@ export default function AudienceInsightCard({
           <div className="strengths-tags-row">
             {diagnosis.topStrengths.map((str, idx) => (
               <div key={idx} className="strength-pill">
-                <CheckCircle2 size={13} className="text-emerald" />
+                <CheckCircle2 size={12} className="text-emerald" />
                 <span>{str}</span>
               </div>
             ))}
@@ -146,24 +149,24 @@ export default function AudienceInsightCard({
       {/* Creator Action Buttons Toolbar */}
       <div className="insight-actions-footer">
         <div className="footer-guidance">
-          <span>Choose how to proceed with this audience feedback:</span>
+          <span>Action this audience feedback:</span>
         </div>
 
         <div className="creator-action-buttons">
           <Button
             variant="ghost"
-            size="md"
-            icon={<RotateCcw size={14} />}
+            size="sm"
+            icon={<RotateCcw size={13} />}
             onClick={onReSimulate}
             title="Re-run simulation across audience viewpoints"
           >
-            Run Simulation Again
+            Re-Simulate
           </Button>
 
           <Button
             variant="secondary"
-            size="md"
-            icon={<ShieldCheck size={15} />}
+            size="sm"
+            icon={<ShieldCheck size={14} />}
             onClick={handleKeepScene}
             disabled={sceneKept}
           >
@@ -172,12 +175,12 @@ export default function AudienceInsightCard({
 
           <Button
             variant="primary"
-            size="md"
-            icon={<FileEdit size={15} />}
+            size="sm"
+            icon={<Sparkles size={14} />}
             onClick={onImproveScene}
             className="improve-scene-cta"
           >
-            Improve Scene
+            AI Scene Remix
           </Button>
         </div>
       </div>

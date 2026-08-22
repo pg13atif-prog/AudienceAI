@@ -27,21 +27,23 @@ export default function ConsensusBanner({ consensusData }) {
           </h2>
         </div>
 
-        <div className="consensus-score-box">
-          <span className="consensus-score-label">Simulated Consensus</span>
-          <div className="consensus-score-digits">
-            <span className="consensus-big-score">{consensusData.overallAverage}</span>
-            <span className="consensus-denom">/100</span>
+        {consensusData.overallAverage !== undefined && (
+          <div className="consensus-score-box">
+            <span className="consensus-score-label">Consensus Score</span>
+            <div className="consensus-score-digits">
+              <span className="consensus-big-score">{consensusData.overallAverage}</span>
+              <span className="consensus-denom">/100</span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <div className="consensus-insights-grid">
         {/* Top Pattern Agreement */}
         {consensusData.patterns && consensusData.patterns.length > 0 && (
-          <div className="consensus-insight-card">
+          <div className="consensus-insight-card card-pattern">
             <div className="insight-card-label text-amber">
-              <Users size={14} />
+              <Users size={13} />
               <span>Cross-Persona Pattern</span>
             </div>
             <p className="insight-card-text">
@@ -55,25 +57,32 @@ export default function ConsensusBanner({ consensusData }) {
 
         {/* Viewpoint Divergence */}
         {consensusData.divergenceSummary && (
-          <div className="consensus-insight-card">
+          <div className="consensus-insight-card card-divergence">
             <div className="insight-card-label text-indigo">
-              <TrendingUp size={14} />
+              <TrendingUp size={13} />
               <span>Viewpoint Divergence</span>
             </div>
             <p className="insight-card-text">
               {consensusData.divergenceSummary}
             </p>
-            <span className="insight-personas-involved">
-              High: {consensusData.highestPersona?.name} ({consensusData.highestPersona?.score}) • Low: {consensusData.lowestPersona?.name} ({consensusData.lowestPersona?.score})
-            </span>
+            {consensusData.highestPersona && consensusData.lowestPersona && (
+              <div className="divergence-range-row">
+                <span className="divergence-pill pill-high">
+                  High: {consensusData.highestPersona.name} ({consensusData.highestPersona.score})
+                </span>
+                <span className="divergence-pill pill-low">
+                  Low: {consensusData.lowestPersona.name} ({consensusData.lowestPersona.score})
+                </span>
+              </div>
+            )}
           </div>
         )}
 
         {/* Universal Strengths */}
         {consensusData.sampleStrengths && consensusData.sampleStrengths.length > 0 && (
-          <div className="consensus-insight-card">
+          <div className="consensus-insight-card card-strength">
             <div className="insight-card-label text-emerald">
-              <CheckCircle2 size={14} />
+              <CheckCircle2 size={13} />
               <span>Universal Story Strength</span>
             </div>
             <p className="insight-card-text">
