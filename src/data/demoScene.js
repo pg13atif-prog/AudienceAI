@@ -67,3 +67,5 @@ Alex's grip on his weapon tightens. Rain cascades down his face. A tense, suffoc
     humor: { score: 20, label: 'Grim & Tense', description: 'High dramatic gravity with zero comedic levity.' }
   }
 };
+
+export const DEMO_SCENES = [DEMO_SCENE];
