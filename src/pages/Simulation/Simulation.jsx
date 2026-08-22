@@ -30,7 +30,6 @@ import PersonaCard from '../../components/Cards/PersonaCard';
 import ReactionCard from '../../components/Cards/ReactionCard';
 import SimulationProgress from '../../components/Simulation/SimulationProgress';
 import ConsensusBanner from '../../components/Simulation/ConsensusBanner';
-import LiveReactionFeed from '../../components/Simulation/LiveReactionFeed';
 import PersonaBreakdown from '../../components/Simulation/PersonaBreakdown';
 import PersonaDetailModal from '../../components/Simulation/PersonaDetailModal';
 import AudienceInsightCard from '../../components/Insights/AudienceInsightCard';
@@ -470,15 +469,6 @@ export default function Simulation({
                 <Users size={14} />
                 <span>Persona Critiques ({simResults?.length || 0})</span>
               </button>
-
-              <button
-                type="button"
-                className={`results-tab-btn ${resultsTab === 'feed' ? 'active' : ''}`}
-                onClick={() => setResultsTab('feed')}
-              >
-                <Clock size={14} />
-                <span>Live Feed</span>
-              </button>
             </div>
 
             <div className="results-nav-actions">
@@ -636,26 +626,6 @@ export default function Simulation({
           )}
 
           {/* TAB 3: LIVE FEED & FULL COMPARISON */}
-          {resultsTab === 'feed' && (
-            <div className="sim-tab-feed-grid">
-              <div className="feed-col-left">
-                <LiveReactionFeed 
-                  reactions={simResults || []}
-                  onSelectReaction={(reaction) => {
-                    setSelectedPersonaTabId(reaction.personaId);
-                    setResultsTab('personas');
-                  }}
-                />
-              </div>
-              <div className="feed-col-right">
-                <div className="feed-all-cards-grid">
-                  {simResults && simResults.map((reaction, idx) => (
-                    <ReactionCard key={reaction.personaId || idx} reaction={reaction} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       )}
 
