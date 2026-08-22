@@ -17,6 +17,23 @@ import Button from '../Common/Button';
 import './AudienceInsightCard.css';
 
 /**
+ * Clean headline helper to prevent raw quotes from rendering in titles
+ */
+function formatPrimaryHeadline(category, summary, craftSummary) {
+  if (craftSummary && !craftSummary.includes(':"') && !craftSummary.includes(': "')) {
+    return craftSummary;
+  }
+  if (!summary) return `${category || 'Narrative'} Refinement Recommended`;
+  
+  // If summary has a quote (e.g. '...concerns: "Whoa..."'), strip the quote
+  if (summary.includes(':"') || summary.includes(': "')) {
+    const cleanBeforeQuote = summary.split(/:\s*"/)[0];
+    return cleanBeforeQuote;
+  }
+  return summary;
+}
+
+/**
  * AudienceInsightCard
  * Prominent diagnostic card displaying primary problem, why it matters,
  * noticing personas, actionable suggestions, strengths, and creator action triggers.
@@ -49,13 +66,19 @@ export default function AudienceInsightCard({
     }
   };
 
+  const headline = formatPrimaryHeadline(
+    diagnosis.primaryCategory, 
+    diagnosis.primaryIssueSummary, 
+    diagnosis.craftSummary
+  );
+
   return (
     <div className="audience-insight-card glass-panel">
       {/* Top Header Row */}
       <div className="insight-card-top">
         <div className="insight-header-badges">
           <Badge variant="amber" size="sm" icon={<AlertCircle size={13} />}>
-            Audience Insight & Problem Detection
+            Primary Problem Detection
           </Badge>
           <Badge variant={getSeverityBadgeVariant(diagnosis.severity)} size="sm">
             {diagnosis.severity} Priority
@@ -66,7 +89,7 @@ export default function AudienceInsightCard({
         {sceneKept && (
           <div className="scene-approved-pill">
             <Check size={13} />
-            <span>Scene Approved by Creator</span>
+            <span>Scene Approved</span>
           </div>
         )}
       </div>
@@ -75,12 +98,14 @@ export default function AudienceInsightCard({
       <div className="insight-primary-issue-block">
         <div className="primary-issue-title-row">
           <div className="issue-warning-icon-box">
-            <AlertCircle size={20} className="text-amber" />
+            <AlertCircle size={18} className="text-amber" />
           </div>
           <div className="primary-issue-text-wrap">
-            <span className="primary-issue-category-label">Primary Issue Detected:</span>
+            <span className="primary-issue-category-label">
+              Primary Bottleneck • {diagnosis.primaryCategory}
+            </span>
             <h2 className="primary-issue-heading">
-              {diagnosis.primaryCategory} — {diagnosis.craftSummary || diagnosis.primaryIssueSummary}
+              {headline}
             </h2>
           </div>
         </div>
@@ -88,7 +113,7 @@ export default function AudienceInsightCard({
         {/* Why It Matters Callout */}
         <div className="why-it-matters-box">
           <div className="why-it-matters-label">
-            <Info size={13} className="text-indigo" />
+            <Info size={12} className="text-indigo" />
             <span>Why it matters for audience engagement:</span>
           </div>
           <p className="why-it-matters-text">
@@ -97,22 +122,25 @@ export default function AudienceInsightCard({
         </div>
       </div>
 
-      {/* Noticing Personas Supporting Evidence (Compact Horizontal/2-Col Layout) */}
+      {/* Noticing Personas Supporting Evidence (Compact Horizontal Grid) */}
       {diagnosis.noticingPersonas && diagnosis.noticingPersonas.length > 0 && (
         <div className="noticing-personas-block">
           <span className="section-label">
-            Which Audience Viewpoints Flagged This ({diagnosis.noticingCount} of {diagnosis.totalPersonas}):
+            Flagged by {diagnosis.noticingCount} of {diagnosis.totalPersonas} Viewpoints:
           </span>
           <div className="noticing-personas-grid">
-            {diagnosis.noticingPersonas.map((p, idx) => (
-              <div key={p.personaId || idx} className={`noticing-persona-chip chip-${p.colorKey || 'casual'}`}>
-                <div className="noticing-persona-head">
-                  <span className="persona-chip-dot" />
-                  <span className="noticing-persona-name">{p.personaName}</span>
+            {diagnosis.noticingPersonas.map((p, idx) => {
+              const quoteSnippet = (p.quote || '').length > 85 ? (p.quote || '').slice(0, 82).trim() + '...' : p.quote;
+              return (
+                <div key={p.personaId || idx} className={`noticing-persona-chip chip-${p.colorKey || 'casual'}`}>
+                  <div className="noticing-persona-head">
+                    <span className="persona-chip-dot" />
+                    <span className="noticing-persona-name">{p.personaName}</span>
+                  </div>
+                  <p className="noticing-persona-quote">"{quoteSnippet}"</p>
                 </div>
-                <p className="noticing-persona-quote">"{p.quote}"</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -120,9 +148,9 @@ export default function AudienceInsightCard({
       {/* Suggested Actionable Improvement */}
       <div className="suggested-improvement-block">
         <div className="improvement-header">
-          <Sparkles size={15} className="text-amber" />
-          <span className="improvement-title">Suggested Improvement:</span>
-          <span className="improvement-scope-tag">Targeted Revision</span>
+          <Sparkles size={14} className="text-amber" />
+          <span className="improvement-title">Targeted AI Revision:</span>
+          <span className="improvement-scope-tag">Surgical Edit</span>
         </div>
         <p className="improvement-text">
           {diagnosis.suggestedImprovement}
@@ -133,12 +161,12 @@ export default function AudienceInsightCard({
       {diagnosis.topStrengths && diagnosis.topStrengths.length > 0 && (
         <div className="insight-strengths-block">
           <span className="section-label text-emerald">
-            ✓ What Worked in This Scene:
+            ✓ Validated Strengths:
           </span>
           <div className="strengths-tags-row">
             {diagnosis.topStrengths.map((str, idx) => (
               <div key={idx} className="strength-pill">
-                <CheckCircle2 size={12} className="text-emerald" />
+                <CheckCircle2 size={11} className="text-emerald" />
                 <span>{str}</span>
               </div>
             ))}
@@ -149,7 +177,7 @@ export default function AudienceInsightCard({
       {/* Creator Action Buttons Toolbar */}
       <div className="insight-actions-footer">
         <div className="footer-guidance">
-          <span>Action this audience feedback:</span>
+          <span>Action this feedback:</span>
         </div>
 
         <div className="creator-action-buttons">
@@ -166,7 +194,7 @@ export default function AudienceInsightCard({
           <Button
             variant="secondary"
             size="sm"
-            icon={<ShieldCheck size={14} />}
+            icon={<ShieldCheck size={13} />}
             onClick={handleKeepScene}
             disabled={sceneKept}
           >

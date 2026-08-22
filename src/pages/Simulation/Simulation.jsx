@@ -498,43 +498,47 @@ export default function Simulation({
 
           {/* TAB 1: OVERVIEW & DIAGNOSTICS */}
           {resultsTab === 'overview' && (
-            <div className="sim-tab-overview-grid">
-              {/* Left Column: Problem Diagnosis Card */}
-              <div className="overview-left-col">
-                {problemDiagnosis && (
-                  <AudienceInsightCard
-                    diagnosis={problemDiagnosis}
-                    onImproveScene={() => setIsRemixModalOpen(true)}
-                    onKeepScene={async () => {
-                      if (activeScene && onUpdateScene) {
-                        const updated = {
-                          ...activeScene,
-                          status: 'Completed',
-                          acceptedByCreator: true,
-                          updatedAt: new Date().toISOString()
-                        };
-                        await onUpdateScene(updated);
-                      }
+            <div className="sim-tab-overview-container">
+              {/* 1. Full-Width Top Consensus Banner */}
+              {consensusData && (
+                <ConsensusBanner consensusData={consensusData} />
+              )}
+
+              {/* 2. Side-by-Side Balanced Split Grid */}
+              <div className="sim-overview-split-grid">
+                {/* Left Column: Problem Diagnosis Card */}
+                <div className="overview-diag-col">
+                  {problemDiagnosis && (
+                    <AudienceInsightCard
+                      diagnosis={problemDiagnosis}
+                      onImproveScene={() => setIsRemixModalOpen(true)}
+                      onKeepScene={async () => {
+                        if (activeScene && onUpdateScene) {
+                          const updated = {
+                            ...activeScene,
+                            status: 'Completed',
+                            acceptedByCreator: true,
+                            updatedAt: new Date().toISOString()
+                          };
+                          await onUpdateScene(updated);
+                        }
+                      }}
+                      onReSimulate={handleStartSimulation}
+                    />
+                  )}
+                </div>
+
+                {/* Right Column: Persona Viewpoint Breakdown */}
+                <div className="overview-breakdown-col">
+                  <PersonaBreakdown
+                    personaRankings={consensusData?.personaRankings || []}
+                    selectedPersonaId={selectedPersonaTabId}
+                    onSelectPersona={(personaId) => {
+                      setSelectedPersonaTabId(personaId);
+                      setResultsTab('personas');
                     }}
-                    onReSimulate={handleStartSimulation}
                   />
-                )}
-              </div>
-
-              {/* Right Column: Consensus Banner & Persona Ranking Breakdown */}
-              <div className="overview-right-col">
-                {consensusData && (
-                  <ConsensusBanner consensusData={consensusData} />
-                )}
-
-                <PersonaBreakdown
-                  personaRankings={consensusData?.personaRankings || []}
-                  selectedPersonaId={selectedPersonaTabId}
-                  onSelectPersona={(personaId) => {
-                    setSelectedPersonaTabId(personaId);
-                    setResultsTab('personas');
-                  }}
-                />
+                </div>
               </div>
             </div>
           )}

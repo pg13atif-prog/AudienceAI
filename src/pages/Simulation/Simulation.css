@@ -429,20 +429,27 @@
   gap: 8px;
 }
 
-/* ── Tab 1: Overview 2-Column Balanced Grid ───────────────────────────────── */
-.sim-tab-overview-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
-  gap: 18px;
-  align-items: start;
-}
-
-.overview-left-col,
-.overview-right-col {
+/* ── Tab 1: Overview & Diagnostics Balanced Architecture ────────────────── */
+.sim-tab-overview-container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.sim-overview-split-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: stretch;
+}
+
+.overview-diag-col,
+.overview-breakdown-col {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  height: 100%;
 }
 
 /* ── Tab 2: Persona Deep Dives View ──────────────────────────────────────── */
@@ -555,7 +562,7 @@
 
 /* ── Responsive Breakpoints ──────────────────────────────────────────────── */
 @media (max-width: 1100px) {
-  .sim-tab-overview-grid,
+  .sim-overview-split-grid,
   .sim-tab-feed-grid {
     grid-template-columns: 1fr;
   }

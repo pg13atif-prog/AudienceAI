@@ -1,22 +1,23 @@
 .audience-insight-card {
-  padding: 20px 24px;
+  padding: 18px 22px;
   border-radius: var(--radius-xl);
   border: 1px solid var(--border-medium);
   border-left: 4px solid var(--accent-amber);
   background: linear-gradient(135deg, rgba(22, 27, 40, 0.95) 0%, rgba(12, 15, 24, 0.95) 100%);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), var(--glow-subtle);
   animation: fadeIn 0.25s ease-out;
   min-width: 0;
+  height: 100%;
 }
 
 .insight-card-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -28,7 +29,7 @@
 }
 
 .insight-disclaimer {
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
@@ -44,7 +45,7 @@
   background: rgba(52, 211, 153, 0.15);
   color: #34d399;
   border: 1px solid rgba(52, 211, 153, 0.35);
-  padding: 3px 10px;
+  padding: 2px 8px;
   border-radius: 9999px;
   font-size: 11px;
   font-weight: 600;
@@ -54,7 +55,7 @@
 .insight-primary-issue-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .primary-issue-title-row {
@@ -64,8 +65,8 @@
 }
 
 .issue-warning-icon-box {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-md);
   background: rgba(245, 158, 11, 0.12);
   border: 1px solid rgba(245, 158, 11, 0.3);
@@ -73,7 +74,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .primary-issue-text-wrap {
@@ -84,7 +85,7 @@
 }
 
 .primary-issue-category-label {
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -92,7 +93,7 @@
 }
 
 .primary-issue-heading {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1.35;
@@ -106,17 +107,17 @@
   border: 1px solid var(--border-subtle);
   border-left: 3px solid #818cf8;
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .why-it-matters-label {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -124,14 +125,14 @@
 }
 
 .why-it-matters-text {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-secondary);
-  line-height: 1.45;
+  line-height: 1.4;
   word-break: break-word;
   overflow-wrap: break-word;
 }
 
-/* Noticing Personas Supporting Evidence - Compact 2-Column Grid */
+/* Noticing Personas Supporting Evidence - Compact Grid */
 .noticing-personas-block {
   display: flex;
   flex-direction: column;
@@ -139,7 +140,7 @@
 }
 
 .section-label {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -148,18 +149,18 @@
 
 .noticing-personas-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 6px;
 }
 
 .noticing-persona-chip {
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: var(--radius-md);
   background: rgba(8, 9, 13, 0.55);
   border: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
 }
 
@@ -182,15 +183,15 @@
 }
 
 .noticing-persona-name {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .noticing-persona-quote {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-muted);
-  line-height: 1.35;
+  line-height: 1.3;
   font-style: italic;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -205,10 +206,10 @@
   background: linear-gradient(90deg, rgba(245, 158, 11, 0.08) 0%, rgba(99, 102, 241, 0.05) 100%);
   border: 1px solid rgba(245, 158, 11, 0.25);
   border-radius: var(--radius-md);
-  padding: 10px 14px;
+  padding: 9px 12px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .improvement-header {
@@ -218,7 +219,7 @@
 }
 
 .improvement-title {
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -238,10 +239,10 @@
 }
 
 .improvement-text {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
   color: var(--text-primary);
-  line-height: 1.45;
+  line-height: 1.4;
   word-break: break-word;
   overflow-wrap: break-word;
 }
@@ -250,25 +251,25 @@
 .insight-strengths-block {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .strengths-tags-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 5px;
 }
 
 .strength-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   background: rgba(52, 211, 153, 0.08);
   border: 1px solid rgba(52, 211, 153, 0.22);
   color: #a7f3d0;
-  padding: 4px 8px;
+  padding: 3px 7px;
   border-radius: var(--radius-md);
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 500;
 }
 
@@ -277,21 +278,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--border-subtle);
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
+  margin-top: auto;
 }
 
 .footer-guidance {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-muted);
 }
 
 .creator-action-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -302,7 +304,7 @@
 
 @media (max-width: 640px) {
   .audience-insight-card {
-    padding: 16px 18px;
+    padding: 14px 16px;
   }
   .noticing-personas-grid {
     grid-template-columns: 1fr;
