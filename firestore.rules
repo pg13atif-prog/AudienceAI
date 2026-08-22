@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check valid string lengths
+    function isValidTitle(title) {
+      return title is string && title.size() > 0 && title.size() <= 200;
+    }
+    
+    function isValidContent(content) {
+      return content is string && content.size() > 0 && content.size() <= 100000;
+    }
+
+    // Scenes Collection
+    match /scenes/{sceneId} {
+      allow read: if true;
+      allow create: if request.resource.data.title is string && isValidTitle(request.resource.data.title);
+      allow update: if request.resource.data.title is string && isValidTitle(request.resource.data.title);
+      allow delete: if true;
+
+      // Version subcollection if used
+      match /versions/{versionId} {
+        allow read, write: if true;
+      }
+    }
+
+    // Simulations Audit Log Collection
+    match /simulations/{simulationId} {
+      allow read: if true;
+      allow create: if request.resource.data.sceneId is string && request.resource.data.results is list;
+      allow update: if false; // Simulations are immutable records of past runs
+      allow delete: if true;
+    }
+  }
+}

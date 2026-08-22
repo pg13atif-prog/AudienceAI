@@ -1,0 +1,214 @@
+.reaction-card {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-card);
+  transition: all var(--transition-normal);
+}
+
+.reaction-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow), 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+.reaction-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.reaction-persona-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reaction-avatar-box {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+}
+
+.reaction-casual .reaction-avatar-box { background: var(--persona-casual-bg); color: var(--persona-casual); border-color: var(--persona-casual-border); }
+.reaction-critic .reaction-avatar-box { background: var(--persona-critic-bg); color: var(--persona-critic); border-color: var(--persona-critic-border); }
+.reaction-lore .reaction-avatar-box { background: var(--persona-lore-bg); color: var(--persona-lore); border-color: var(--persona-lore-border); }
+.reaction-emotional .reaction-avatar-box { background: var(--persona-emotional-bg); color: var(--persona-emotional); border-color: var(--persona-emotional-border); }
+
+.reaction-persona-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.reaction-persona-viewpoint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.reaction-score-badge {
+  display: flex;
+  align-items: baseline;
+  background: rgba(8, 9, 13, 0.8);
+  border: 1px solid var(--border-medium);
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+}
+
+.reaction-score-num {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent-amber);
+  font-family: var(--font-mono);
+}
+
+.reaction-score-denom {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 2px;
+}
+
+/* Quote box */
+.reaction-quote-box {
+  background: rgba(8, 9, 13, 0.65);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-amber);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+}
+
+.reaction-quote-text {
+  font-size: 13.5px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Mini metric grid */
+.reaction-metrics-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  background: rgba(8, 9, 13, 0.5);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.mini-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+
+.mini-metric-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-dim);
+}
+
+.mini-metric-val {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+/* Feedback sections */
+.reaction-feedback-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feedback-section-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.text-emerald { color: #34d399; }
+.text-amber { color: #fbbf24; }
+.text-indigo { color: #a5b4fc; }
+
+.feedback-list {
+  list-style: disc inside;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.issues-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.issue-item {
+  background: rgba(8, 9, 13, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.issue-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.badge-observed {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-interpretation {
+  background: rgba(99, 102, 241, 0.15);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.badge-suggestion {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.issue-desc {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+@media (max-width: 768px) {
+  .reaction-metrics-mini-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}

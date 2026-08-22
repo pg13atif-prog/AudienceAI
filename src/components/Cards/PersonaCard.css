@@ -1,0 +1,272 @@
+.persona-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  min-height: 440px;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid var(--border-subtle);
+}
+
+.persona-card:focus-visible {
+  outline: 2px solid var(--accent-amber);
+  outline-offset: 2px;
+}
+
+/* Unselected State (Dimmed & Muted) */
+.persona-card.unselected {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+  background: rgba(12, 15, 22, 0.5);
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.persona-card.unselected:hover {
+  opacity: 0.8;
+  filter: grayscale(0.2);
+  transform: translateY(-2px);
+}
+
+/* Selected State */
+.persona-card.selected {
+  opacity: 1;
+  filter: none;
+}
+
+.persona-card.selected:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow), 0 0 25px rgba(0, 0, 0, 0.5);
+}
+
+/* Persona Color Themes when Selected */
+.persona-casual.selected {
+  border-color: var(--persona-casual-border);
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, rgba(18, 22, 34, 0.9) 100%);
+  box-shadow: 0 4px 20px rgba(56, 189, 248, 0.12);
+}
+.persona-casual .persona-avatar-icon {
+  background: var(--persona-casual-bg);
+  color: var(--persona-casual);
+  border: 1px solid var(--persona-casual-border);
+}
+
+.persona-critic.selected {
+  border-color: var(--persona-critic-border);
+  background: linear-gradient(180deg, rgba(192, 132, 252, 0.08) 0%, rgba(18, 22, 34, 0.9) 100%);
+  box-shadow: 0 4px 20px rgba(192, 132, 252, 0.12);
+}
+.persona-critic .persona-avatar-icon {
+  background: var(--persona-critic-bg);
+  color: var(--persona-critic);
+  border: 1px solid var(--persona-critic-border);
+}
+
+.persona-lore.selected {
+  border-color: var(--persona-lore-border);
+  background: linear-gradient(180deg, rgba(52, 211, 153, 0.08) 0%, rgba(18, 22, 34, 0.9) 100%);
+  box-shadow: 0 4px 20px rgba(52, 211, 153, 0.12);
+}
+.persona-lore .persona-avatar-icon {
+  background: var(--persona-lore-bg);
+  color: var(--persona-lore);
+  border: 1px solid var(--persona-lore-border);
+}
+
+.persona-emotional.selected {
+  border-color: var(--persona-emotional-border);
+  background: linear-gradient(180deg, rgba(251, 113, 133, 0.08) 0%, rgba(18, 22, 34, 0.9) 100%);
+  box-shadow: 0 4px 20px rgba(251, 113, 133, 0.12);
+}
+.persona-emotional .persona-avatar-icon {
+  background: var(--persona-emotional-bg);
+  color: var(--persona-emotional);
+  border: 1px solid var(--persona-emotional-border);
+}
+
+/* Card Header */
+.persona-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.persona-avatar-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.persona-avatar-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.persona-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.persona-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.persona-archetype {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* Interactive Checkbox / Toggle Pill */
+.persona-selection-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all var(--transition-fast);
+}
+
+.persona-selection-toggle.active {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.persona-selection-toggle.inactive {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dim);
+  border: 1px solid var(--border-subtle);
+}
+
+.toggle-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 9, 13, 0.8);
+  border: 1px solid currentColor;
+}
+
+.persona-selection-toggle.active .toggle-checkbox {
+  background: var(--accent-amber);
+  color: var(--text-inverse);
+  border-color: var(--accent-amber);
+}
+
+.persona-card-summary {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+
+.persona-card-perspective-box {
+  background: rgba(8, 9, 13, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.persona-perspective-label {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.persona-perspective-text {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.persona-card-questions {
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.persona-section-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.persona-questions-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.persona-question-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.persona-question-bullet {
+  color: var(--accent-amber);
+  font-weight: bold;
+}
+
+.persona-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.persona-tuning-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+}
+
+.persona-click-hint {
+  font-size: 10.5px;
+  color: var(--text-dim);
+}
+
+@media (max-width: 640px) {
+  .persona-card {
+    min-height: auto;
+    padding: 20px;
+  }
+}
