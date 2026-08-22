@@ -7,6 +7,22 @@ const HISTORY_STORAGE_KEY = 'audienceai_simulation_history';
 
 export const historyService = {
   /**
+   * Add entry alias for compatibility with Simulation.jsx
+   * Supports both (scene, results, metrics, problemDiagnosis) and ({ scene, results, metrics, problemDiagnosis })
+   */
+  async addEntry(sceneOrParams, results = [], metrics = {}, problemDiagnosis = null) {
+    if (sceneOrParams && typeof sceneOrParams === 'object' && sceneOrParams.scene) {
+      return this.recordSimulationSession(sceneOrParams);
+    }
+    return this.recordSimulationSession({
+      scene: sceneOrParams,
+      results: Array.isArray(results) ? results : [],
+      metrics: metrics || {},
+      problemDiagnosis
+    });
+  },
+
+  /**
    * Record a completed simulation run to history
    * @param {Object} params
    * @param {Object} params.scene

@@ -9,63 +9,37 @@ const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
  * @param {Object} persona
  * @returns {string}
  */
+/**
+ * Builds persona-specific system instructions and evaluation criteria (Token-optimized)
+ * @param {Object} persona
+ * @returns {string}
+ */
 const buildPersonaSystemInstruction = (persona) => {
+  let profile = '';
   switch (persona.id) {
     case 'casual-viewer':
-      return `You are simulating a "Casual Viewer" audience persona reacting to a creative scene.
-YOUR AUDIENCE PROFILE:
-- You consume stories for fun, thrill, and emotional connection.
-- You care deeply about: Immediate understanding, Entertainment value, Pacing momentum, and Visceral emotional reactions.
-- You get bored if the opening drags or characters talk without clear stakes.
-- You get confused if spatial movement or scene motivations are murky.
-- You do NOT obsess over deep lore nuances unless they directly confuse the immediate plot.
-
-YOUR TASK:
-- React to this scene in a natural, candid first-person voice as a casual viewer.
-- Score the scene (0-100) on Tension, Emotional Impact, Pacing, Humor, Consistency, and Clarity.
-- Identify specific strengths, observed issues (e.g. moments of confusion or slowness), possible interpretations, and suggestions.
-- Strict requirement: Clearly categorize every issue as either "observed_issue", "possible_interpretation", or "suggestion".`;
-
+      profile = 'Values entertainment, immediate clarity, tension, and brisk pacing. Flags moments that drag or confuse.';
+      break;
     case 'story-critic':
-      return `You are simulating a "Story Critic" audience persona reacting to a creative scene.
-YOUR AUDIENCE PROFILE:
-- You are a seasoned dramatist and narrative analyst.
-- You analyze: Narrative structure, Pacing rhythm, Character motivations, Plot logic, Subtext, and Setup/payoff mechanics.
-- You look for dialogue that feels on-the-nose, unearned character turns, artificial melodrama, and unconvincing choices.
-- You appreciate layered dialogue, dramatic irony, organic psychological progression, and efficient exposition.
-
-YOUR TASK:
-- Provide an incisive, craft-focused evaluation in an intellectual, discerning voice.
-- Score the scene (0-100) on Tension, Emotional Impact, Pacing, Humor, Consistency, and Clarity.
-- Strictly distinguish between observed issues (concrete craft/plot flaws), possible interpretations (how the scene might be read), and actionable structural suggestions.`;
-
+      profile = 'Analyzes structure, subtext, dialogue authenticity, character motivation, and setup/payoff mechanics.';
+      break;
     case 'lore-enthusiast':
-      return `You are simulating a "Lore Enthusiast" audience persona reacting to a creative scene.
-YOUR AUDIENCE PROFILE:
-- You are an avid worldbuilding and canon expert.
-- You focus on: World-building rules, Historical continuity, Faction politics, Magic/tech systems, Character backstory consistency, and Internal logic.
-- You scrutinize whether actions violate established lore, whether powers/rules are consistently applied, and whether subtle foreshadowing is earned.
-
-YOUR TASK:
-- Evaluate the scene from a canon and world-logic perspective in an observant, detail-oriented voice.
-- Score the scene (0-100) on Tension, Emotional Impact, Pacing, Humor, Consistency, and Clarity.
-- Distinguish between concrete world/logic contradictions ("observed_issue"), speculative lore theories ("possible_interpretation"), and worldbuilding enhancements ("suggestion").`;
-
+      profile = 'Focuses on internal logic, world rules, canon consistency, and continuity.';
+      break;
     case 'emotional-viewer':
-      return `You are simulating an "Emotional Viewer" audience persona reacting to a creative scene.
-YOUR AUDIENCE PROFILE:
-- You are deeply invested in character empathy, emotional stakes, vulnerability, interpersonal chemistry, and cathartic payoffs.
-- You feel heartbreak, betrayal, intimacy, dread, or triumph deeply alongside the characters.
-- You check whether emotional turns feel earned, whether characters show genuine vulnerability, and whether their relationships have authentic spark.
-
-YOUR TASK:
-- React from the heart in an emotionally resonant, passionate first-person voice.
-- Score the scene (0-100) on Tension, Emotional Impact, Pacing, Humor, Consistency, and Clarity.
-- Clearly classify items as "observed_issue" (emotional disconnect or flat chemistry), "possible_interpretation" (perceived emotional subtext), or "suggestion" (ways to deepen character resonance).`;
-
+      profile = 'Invested in emotional stakes, character vulnerability, relationship chemistry, and dramatic payoff.';
+      break;
     default:
-      return `You are simulating an audience persona (${persona.name}) evaluating a scene based on: ${persona.focusAreas?.join(', ')}.`;
+      profile = `Evaluates story through: ${persona.focusAreas?.join(', ') || 'general audience lens'}.`;
   }
+
+  return `You simulate a "${persona.name}" audience persona.
+PROFILE: ${profile}
+RULES:
+1. Provide a concise 2-3 sentence candid first-person reaction (max 45 words).
+2. Score 0-100: tension, emotionalImpact, pacing, humor, consistency, clarity, overall.
+3. List 1-2 concise observed issues, 1 key strength, and 1 targeted suggestion.
+Keep your analysis punchy and token-efficient.`;
 };
 
 /**
@@ -76,35 +50,28 @@ YOUR TASK:
  */
 const buildScenePrompt = (scene, persona) => {
   const charactersList = Array.isArray(scene.characters) ? scene.characters.join(', ') : 'None listed';
+  const content = scene.content || scene.scriptContent || '';
   
-  return `Please evaluate the following story scene from your specific persona perspective (${persona.name}).
+  return `Evaluate scene from ${persona.name} perspective.
+TITLE: ${scene.title || 'Untitled'} | ${scene.subtitle || 'Act I'}
+CHARACTERS: ${charactersList}
+CONTEXT: ${scene.context ? scene.context.slice(0, 300) : 'Standard dramatic context.'}
 
-SCENE PAYLOAD:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-TITLE: ${scene.title || 'Untitled Scene'}
-SEQUENCE / ACT: ${scene.subtitle || 'Act I • Scene 1'}
-GENRE & TONE: ${scene.genre || 'Drama / Fiction'}
-CHARACTERS PRESENT: ${charactersList}
+SCENE SCRIPT:
+${content}
 
-STORY CONTEXT & WORLD LORE:
-${scene.context || 'No additional backstory provided.'}
-
-SCENE CONTENT / SCRIPT:
-${scene.content || scene.scriptContent || 'No scene content provided.'}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Return your analysis strictly as valid JSON matching the requested schema.`;
+Return strictly JSON matching schema.`;
 };
 
 /**
- * Structured Response Schema
+ * Structured Response Schema (Concise)
  */
 const RESPONSE_SCHEMA = {
   type: 'OBJECT',
   properties: {
     personaId: { type: 'STRING' },
     personaName: { type: 'STRING' },
-    reaction: { type: 'STRING' },
+    reaction: { type: 'STRING', description: 'Concise 2-3 sentence reaction' },
     overallScore: { type: 'INTEGER' },
     tensionScore: { type: 'INTEGER' },
     emotionalImpactScore: { type: 'INTEGER' },
@@ -121,7 +88,7 @@ const RESPONSE_SCHEMA = {
             type: 'STRING',
             enum: ['observed_issue', 'possible_interpretation', 'suggestion']
           },
-          description: { type: 'STRING' }
+          description: { type: 'STRING', description: 'Max 12 words' }
         },
         required: ['type', 'description']
       }
@@ -195,7 +162,7 @@ const validateAndNormalizeReaction = (raw, persona) => {
  */
 async function callProvider({ provider, key, systemInstruction, userPrompt }) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout
+  const timeoutId = setTimeout(() => controller.abort(), 25000); // 25s timeout
 
   try {
     if (provider === 'groq') {
@@ -210,13 +177,13 @@ async function callProvider({ provider, key, systemInstruction, userPrompt }) {
           messages: [
             {
               role: 'system',
-              content: `${systemInstruction}\n\nIMPORTANT: You must return valid JSON matching this schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
+              content: `${systemInstruction}\n\nIMPORTANT: Return valid JSON matching schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
             },
             { role: 'user', content: userPrompt }
           ],
           response_format: { type: 'json_object' },
           temperature: 0.7,
-          max_tokens: 2048
+          max_tokens: 650
         }),
         signal: controller.signal
       });
@@ -243,13 +210,13 @@ async function callProvider({ provider, key, systemInstruction, userPrompt }) {
           messages: [
             {
               role: 'system',
-              content: `${systemInstruction}\n\nIMPORTANT: You must return valid JSON matching this schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
+              content: `${systemInstruction}\n\nIMPORTANT: Return valid JSON matching schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
             },
             { role: 'user', content: userPrompt }
           ],
           response_format: { type: 'json_object' },
           temperature: 0.7,
-          max_tokens: 2048
+          max_tokens: 650
         }),
         signal: controller.signal
       });
@@ -270,7 +237,7 @@ async function callProvider({ provider, key, systemInstruction, userPrompt }) {
         responseMimeType: 'application/json',
         responseSchema: RESPONSE_SCHEMA,
         temperature: 0.7,
-        maxOutputTokens: 2048
+        maxOutputTokens: 750
       }
     };
 

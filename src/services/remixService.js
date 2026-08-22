@@ -63,7 +63,7 @@ async function callRemixProvider({ provider, key, systemInstruction, userPrompt 
           ],
           response_format: { type: 'json_object' },
           temperature: 0.7,
-          max_tokens: 3500
+          max_tokens: 2200
         }),
         signal: controller.signal
       });
@@ -96,7 +96,7 @@ async function callRemixProvider({ provider, key, systemInstruction, userPrompt 
           ],
           response_format: { type: 'json_object' },
           temperature: 0.7,
-          max_tokens: 3500
+          max_tokens: 2200
         }),
         signal: controller.signal
       });
@@ -117,7 +117,7 @@ async function callRemixProvider({ provider, key, systemInstruction, userPrompt 
         responseMimeType: 'application/json',
         responseSchema: REMIX_RESPONSE_SCHEMA,
         temperature: 0.7,
-        maxOutputTokens: 3500
+        maxOutputTokens: 2200
       }
     };
 
@@ -144,6 +144,13 @@ async function callRemixProvider({ provider, key, systemInstruction, userPrompt 
  * AI Scene Remix Service with Multi-Provider Fallback Cascade
  */
 export const remixService = {
+  /**
+   * Alias for generateRemix (compatible with SceneRemixModal)
+   */
+  async generateRemix(params) {
+    return this.remixScene(params);
+  },
+
   /**
    * Generates an improved screenplay draft based on simulated audience feedback
    * @param {Object} params
