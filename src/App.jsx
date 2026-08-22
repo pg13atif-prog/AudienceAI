@@ -7,6 +7,7 @@ import Simulation from './pages/Simulation/Simulation';
 import Insights from './pages/Insights/Insights';
 import History from './pages/History/History';
 import Settings from './pages/Settings/Settings';
+import Footer from './components/Footer/Footer';
 import { sceneService, normalizeScene } from './services/sceneService';
 import { DEMO_SCENE } from './data/demoScene';
 
@@ -221,6 +222,9 @@ export default function App() {
         <main className="page-container" key={activeRoute}>
           {renderCurrentPage()}
         </main>
+
+        {/* Global Footer */}
+        <Footer onNavigate={setActiveRoute} />
       </div>
     </div>
   );
