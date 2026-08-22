@@ -1,35 +1,66 @@
 /**
- * AI Provider & API Key Service
- * Supports Google Gemini and OpenRouter (OpenAI-compatible) API keys
+ * Multi-Provider AI Key & Provider Management Service
+ * Manages Groq, OpenRouter, and Google Gemini API keys with automatic fallback support
  */
 
-const STORAGE_KEY = 'audienceai_api_key';
-const LEGACY_KEY = 'audienceai_gemini_api_key';
+const STORAGE_GROQ_KEY = 'audienceai_groq_api_key';
+const STORAGE_OPENROUTER_KEY = 'audienceai_openrouter_api_key';
+const STORAGE_GEMINI_KEY = 'audienceai_gemini_api_key';
+const STORAGE_PRIMARY_PROVIDER = 'audienceai_primary_ai_provider';
 
 export const apiKeyService = {
   /**
-   * Get active API key from localStorage or environment variables
+   * Get Groq API key
    * @returns {string}
    */
-  getKey() {
-    const fromStorage = localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_KEY);
-    if (fromStorage && fromStorage.trim().length > 0) {
-      return fromStorage.trim();
-    }
-    const fromEnv = import.meta.env.VITE_OPENROUTER_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
-    if (fromEnv && fromEnv.trim().length > 0) {
-      return fromEnv.trim();
-    }
-    return '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';
+  getGroqKey() {
+    const fromStorage = localStorage.getItem(STORAGE_GROQ_KEY);
+    if (fromStorage && fromStorage.trim()) return fromStorage.trim();
+    return import.meta.env.VITE_GROQ_API_KEY || '';
   },
 
   /**
-   * Determine provider based on key format
+   * Get OpenRouter API key
+   * @returns {string}
+   */
+  getOpenRouterKey() {
+    const fromStorage = localStorage.getItem(STORAGE_OPENROUTER_KEY);
+    if (fromStorage && fromStorage.trim()) return fromStorage.trim();
+    return import.meta.env.VITE_OPENROUTER_API_KEY || '';
+  },
+
+  /**
+   * Get Gemini direct API key
+   * @returns {string}
+   */
+  getGeminiKey() {
+    const fromStorage = localStorage.getItem(STORAGE_GEMINI_KEY);
+    if (fromStorage && fromStorage.trim()) return fromStorage.trim();
+    return import.meta.env.VITE_GEMINI_API_KEY || '';
+  },
+
+  /**
+   * Get primary/active API key
+   * @returns {string}
+   */
+  getKey() {
+    const groq = this.getGroqKey();
+    if (groq) return groq;
+    const openrouter = this.getOpenRouterKey();
+    if (openrouter) return openrouter;
+    return this.getGeminiKey();
+  },
+
+  /**
+   * Determine provider of a given key
    * @param {string} [key]
-   * @returns {'openrouter' | 'gemini'}
+   * @returns {'groq' | 'openrouter' | 'gemini'}
    */
   getProvider(key = null) {
     const activeKey = key || this.getKey();
+    if (activeKey.startsWith('gsk_')) {
+      return 'groq';
+    }
     if (activeKey.startsWith('sk-or-') || activeKey.startsWith('sk-')) {
       return 'openrouter';
     }
@@ -37,33 +68,54 @@ export const apiKeyService = {
   },
 
   /**
-   * Save API key to localStorage
+   * Get ordered fallback cascade list of available providers
+   * @returns {Array<{ provider: 'groq' | 'openrouter' | 'gemini', key: string, name: string }>}
+   */
+  getProviderCascade() {
+    const providers = [];
+
+    const groqKey = this.getGroqKey();
+    if (groqKey) {
+      providers.push({ provider: 'groq', key: groqKey, name: 'Groq (Llama 3.3 70B - Ultra Fast)' });
+    }
+
+    const orKey = this.getOpenRouterKey();
+    if (orKey) {
+      providers.push({ provider: 'openrouter', key: orKey, name: 'OpenRouter (Gemini 2.5 Flash)' });
+    }
+
+    const gemKey = this.getGeminiKey();
+    if (gemKey && !gemKey.startsWith('sk-') && !gemKey.startsWith('gsk_')) {
+      providers.push({ provider: 'gemini', key: gemKey, name: 'Google Gemini Direct' });
+    }
+
+    return providers;
+  },
+
+  /**
+   * Set custom key for a specific provider
+   * @param {'groq' | 'openrouter' | 'gemini'} provider
    * @param {string} key
    */
-  setKey(key) {
-    if (key && key.trim()) {
-      localStorage.setItem(STORAGE_KEY, key.trim());
-      localStorage.setItem(LEGACY_KEY, key.trim());
-    } else {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(LEGACY_KEY);
+  setProviderKey(provider, key) {
+    const trimmed = key ? key.trim() : '';
+    if (provider === 'groq') {
+      if (trimmed) localStorage.setItem(STORAGE_GROQ_KEY, trimmed);
+      else localStorage.removeItem(STORAGE_GROQ_KEY);
+    } else if (provider === 'openrouter') {
+      if (trimmed) localStorage.setItem(STORAGE_OPENROUTER_KEY, trimmed);
+      else localStorage.removeItem(STORAGE_OPENROUTER_KEY);
+    } else if (provider === 'gemini') {
+      if (trimmed) localStorage.setItem(STORAGE_GEMINI_KEY, trimmed);
+      else localStorage.removeItem(STORAGE_GEMINI_KEY);
     }
   },
 
   /**
-   * Check if a valid API key exists
+   * Check if any valid key is configured
    * @returns {boolean}
    */
   hasKey() {
-    const key = this.getKey();
-    return Boolean(key && key.length > 5);
-  },
-
-  /**
-   * Remove stored API key
-   */
-  clearKey() {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(LEGACY_KEY);
+    return Boolean(this.getGroqKey() || this.getOpenRouterKey() || this.getGeminiKey());
   }
 };

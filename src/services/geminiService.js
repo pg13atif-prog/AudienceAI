@@ -1,6 +1,8 @@
 import { apiKeyService } from './apiKeyService';
 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 /**
  * Builds persona-specific system instructions and evaluation criteria
@@ -91,37 +93,33 @@ SCENE CONTENT / SCRIPT:
 ${scene.content || scene.scriptContent || 'No scene content provided.'}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Return your analysis strictly as JSON matching the requested schema.`;
+Return your analysis strictly as valid JSON matching the requested schema.`;
 };
 
 /**
- * Gemini Response Schema for Structured Output
+ * Structured Response Schema
  */
 const RESPONSE_SCHEMA = {
   type: 'OBJECT',
   properties: {
     personaId: { type: 'STRING' },
     personaName: { type: 'STRING' },
-    reaction: { 
-      type: 'STRING', 
-      description: 'First-person viewpoint commentary from the persona speaking directly about their experience reading the scene.' 
-    },
-    overallScore: { type: 'INTEGER', description: 'Overall rating from 0 to 100' },
-    tensionScore: { type: 'INTEGER', description: 'Rating of narrative friction, suspense, or stakes from 0 to 100' },
-    emotionalImpactScore: { type: 'INTEGER', description: 'Rating of emotional resonance and audience connection from 0 to 100' },
-    pacingScore: { type: 'INTEGER', description: 'Rating of flow and rhythm from 0 to 100' },
-    humorScore: { type: 'INTEGER', description: 'Rating of comedic timing or intentional ironic tone from 0 to 100' },
-    consistencyScore: { type: 'INTEGER', description: 'Rating of world logic and character consistency from 0 to 100' },
-    clarityScore: { type: 'INTEGER', description: 'Rating of audience comprehension and spatial clarity from 0 to 100' },
+    reaction: { type: 'STRING' },
+    overallScore: { type: 'INTEGER' },
+    tensionScore: { type: 'INTEGER' },
+    emotionalImpactScore: { type: 'INTEGER' },
+    pacingScore: { type: 'INTEGER' },
+    humorScore: { type: 'INTEGER' },
+    consistencyScore: { type: 'INTEGER' },
+    clarityScore: { type: 'INTEGER' },
     issues: {
       type: 'ARRAY',
-      description: 'List of observed issues, interpretations, and suggestions strictly categorized.',
       items: {
         type: 'OBJECT',
         properties: {
-          type: { 
-            type: 'STRING', 
-            enum: ['observed_issue', 'possible_interpretation', 'suggestion'] 
+          type: {
+            type: 'STRING',
+            enum: ['observed_issue', 'possible_interpretation', 'suggestion']
           },
           description: { type: 'STRING' }
         },
@@ -130,13 +128,11 @@ const RESPONSE_SCHEMA = {
     },
     strengths: {
       type: 'ARRAY',
-      items: { type: 'STRING' },
-      description: 'Key positive aspects of the scene noticed by this persona.'
+      items: { type: 'STRING' }
     },
     suggestions: {
       type: 'ARRAY',
-      items: { type: 'STRING' },
-      description: 'Actionable creative ideas from this persona.'
+      items: { type: 'STRING' }
     }
   },
   required: [
@@ -157,15 +153,11 @@ const RESPONSE_SCHEMA = {
 };
 
 /**
- * Validates and normalizes Gemini reaction output
- * @param {Object} raw
- * @param {Object} persona
- * @returns {Object}
+ * Normalizes and validates persona response
  */
 const validateAndNormalizeReaction = (raw, persona) => {
   const clamp = (num, def = 70) => typeof num === 'number' ? Math.min(100, Math.max(0, Math.round(num))) : def;
 
-  // Normalize issues array to ensure objects with type & description
   const normalizedIssues = Array.isArray(raw.issues) ? raw.issues.map(item => {
     if (typeof item === 'string') {
       return { type: 'observed_issue', description: item };
@@ -176,7 +168,7 @@ const validateAndNormalizeReaction = (raw, persona) => {
         description: item.description || item.text || String(item)
       };
     }
-    return { type: 'observed_issue', description: 'Unspecified issue noted.' };
+    return { type: 'observed_issue', description: 'Pacing or motivation observation noted.' };
   }) : [];
 
   return {
@@ -193,225 +185,212 @@ const validateAndNormalizeReaction = (raw, persona) => {
     consistencyScore: clamp(raw.consistencyScore, 85),
     clarityScore: clamp(raw.clarityScore, 85),
     issues: normalizedIssues,
-    strengths: Array.isArray(raw.strengths) ? raw.strengths : ['Engaging scene concept.'],
-    suggestions: Array.isArray(raw.suggestions) ? raw.suggestions : ['Continue developing character dynamics.']
+    strengths: Array.isArray(raw.strengths) && raw.strengths.length > 0 ? raw.strengths : ['Engaging dramatic premise.'],
+    suggestions: Array.isArray(raw.suggestions) && raw.suggestions.length > 0 ? raw.suggestions : ['Continue developing character subtext.']
   };
 };
 
 /**
- * Main Gemini Simulation Service
+ * Execute simulation against a specific provider
+ */
+async function callProvider({ provider, key, systemInstruction, userPrompt }) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 35000); // 35s timeout
+
+  try {
+    if (provider === 'groq') {
+      const response = await fetch(GROQ_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [
+            {
+              role: 'system',
+              content: `${systemInstruction}\n\nIMPORTANT: You must return valid JSON matching this schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
+            },
+            { role: 'user', content: userPrompt }
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.7,
+          max_tokens: 2048
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        throw new Error(`Groq HTTP ${response.status}: ${await response.text()}`);
+      }
+      const data = await response.json();
+      return data?.choices?.[0]?.message?.content || '';
+    }
+
+    if (provider === 'openrouter') {
+      const response = await fetch(OPENROUTER_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${key}`,
+          'HTTP-Referer': 'https://audienceai.app',
+          'X-Title': 'AudienceAI'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.5-flash',
+          messages: [
+            {
+              role: 'system',
+              content: `${systemInstruction}\n\nIMPORTANT: You must return valid JSON matching this schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
+            },
+            { role: 'user', content: userPrompt }
+          ],
+          response_format: { type: 'json_object' },
+          temperature: 0.7,
+          max_tokens: 2048
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      if (!response.ok) {
+        throw new Error(`OpenRouter HTTP ${response.status}: ${await response.text()}`);
+      }
+      const data = await response.json();
+      return data?.choices?.[0]?.message?.content || '';
+    }
+
+    // Google Gemini Direct
+    const requestBody = {
+      systemInstruction: { parts: [{ text: systemInstruction }] },
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      generationConfig: {
+        responseMimeType: 'application/json',
+        responseSchema: RESPONSE_SCHEMA,
+        temperature: 0.7,
+        maxOutputTokens: 2048
+      }
+    };
+
+    const response = await fetch(`${GEMINI_API_URL}?key=${encodeURIComponent(key)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(requestBody),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    if (!response.ok) {
+      throw new Error(`Gemini HTTP ${response.status}: ${await response.text()}`);
+    }
+    const result = await response.json();
+    return result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+
+/**
+ * Main AI Simulation Service with Multi-Provider Fallback Cascade
  */
 export const geminiService = {
   /**
-   * Run audience simulation for a single persona
+   * Run audience simulation for a single persona with automatic fallback cascade
    * @param {Object} scene
    * @param {Object} persona
    * @param {string} [apiKey]
    * @returns {Promise<Object>}
    */
   async simulateSinglePersona(scene, persona, apiKey = null) {
-    const key = apiKey || apiKeyService.getKey();
-    if (!key) {
-      const err = new Error('Missing API Key. Please provide an API key in Settings or the Simulation window.');
+    const cascade = apiKeyService.getProviderCascade();
+
+    if (cascade.length === 0 && !apiKey) {
+      const err = new Error('No AI API Key configured. Please supply a Groq, OpenRouter, or Gemini key.');
       err.code = 'MISSING_API_KEY';
       throw err;
     }
 
-    const provider = apiKeyService.getProvider(key);
+    const providersToTry = apiKey 
+      ? [{ provider: apiKeyService.getProvider(apiKey), key: apiKey, name: 'Custom Key' }, ...cascade]
+      : cascade;
+
     const systemInstruction = buildPersonaSystemInstruction(persona);
     const userPrompt = buildScenePrompt(scene, persona);
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
+    let lastError = null;
 
-    try {
-      let rawJsonText = '';
-
-      if (provider === 'openrouter') {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${key}`,
-            'HTTP-Referer': 'https://audienceai.app',
-            'X-Title': 'AudienceAI'
-          },
-          body: JSON.stringify({
-            model: 'google/gemini-2.5-flash',
-            messages: [
-              {
-                role: 'system',
-                content: `${systemInstruction}\n\nIMPORTANT: You must return valid JSON matching this schema:\n${JSON.stringify(RESPONSE_SCHEMA, null, 2)}`
-              },
-              { role: 'user', content: userPrompt }
-            ],
-            response_format: { type: 'json_object' },
-            temperature: 0.7,
-            max_tokens: 2048
-          }),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          let errorMsg = `OpenRouter API error (Status ${response.status})`;
-          try {
-            const errorData = await response.json();
-            if (errorData.error && errorData.error.message) {
-              errorMsg = errorData.error.message;
-            }
-          } catch (e) {}
-
-          const err = new Error(errorMsg);
-          err.status = response.status;
-          throw err;
+    // Execute fallback cascade: Groq -> OpenRouter -> Gemini
+    for (let i = 0; i < providersToTry.length; i++) {
+      const { provider, key, name } = providersToTry[i];
+      try {
+        console.log(`[AI Simulation] Querying persona "${persona.name}" via ${name}...`);
+        const rawText = await callProvider({ provider, key, systemInstruction, userPrompt });
+        if (rawText && rawText.trim()) {
+          const cleanJson = rawText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+          const parsed = JSON.parse(cleanJson);
+          return validateAndNormalizeReaction(parsed, persona);
         }
-
-        const data = await response.json();
-        rawJsonText = data?.choices?.[0]?.message?.content || '';
-      } else {
-        // Direct Google Gemini API
-        const requestBody = {
-          systemInstruction: {
-            parts: [{ text: systemInstruction }]
-          },
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: userPrompt }]
-            }
-          ],
-          generationConfig: {
-            responseMimeType: 'application/json',
-            responseSchema: RESPONSE_SCHEMA,
-            temperature: 0.7,
-            maxOutputTokens: 2048
-          }
-        };
-
-        const response = await fetch(`${GEMINI_API_URL}?key=${encodeURIComponent(key)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          let errorMsg = `Gemini API error (Status ${response.status})`;
-          try {
-            const errorData = await response.json();
-            if (errorData.error && errorData.error.message) {
-              errorMsg = errorData.error.message;
-            }
-          } catch (e) {}
-
-          if (response.status === 400 && errorMsg.toLowerCase().includes('api key')) {
-            const err = new Error('Invalid Gemini API Key. Please verify your key in Settings.');
-            err.code = 'INVALID_API_KEY';
-            throw err;
-          }
-          if (response.status === 429) {
-            const err = new Error('Gemini API rate limit exceeded. Please wait a few seconds and try again.');
-            err.code = 'RATE_LIMIT';
-            throw err;
-          }
-
-          const err = new Error(errorMsg);
-          err.status = response.status;
-          throw err;
-        }
-
-        const result = await response.json();
-        rawJsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      } catch (err) {
+        lastError = err;
+        console.warn(`[AI Fallback] Provider ${name} failed (${err.message}). Trying next fallback...`);
       }
-
-      if (!rawJsonText) {
-        throw new Error('AI returned an empty response.');
-      }
-
-      // Clean markdown code blocks if wrapped
-      const cleanJson = rawJsonText.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
-      const parsed = JSON.parse(cleanJson);
-      return validateAndNormalizeReaction(parsed, persona);
-    } catch (err) {
-      clearTimeout(timeoutId);
-      if (err.name === 'AbortError') {
-        const timeoutErr = new Error(`Simulation timed out for ${persona.name}. The server took too long to respond.`);
-        timeoutErr.code = 'TIMEOUT';
-        throw timeoutErr;
-      }
-      throw err;
     }
+
+    throw lastError || new Error(`Simulation failed across all fallback AI providers for ${persona.name}.`);
   },
 
   /**
-   * Run full simulation across all active personas with progress callbacks
+   * Execute multi-persona simulation in sequence with progress callback
    * @param {Object} scene
    * @param {Array<Object>} personas
-   * @param {Function} [onProgress] - (statusObj: { currentPersona, completedCount, totalCount, personaStatuses }) => void
+   * @param {Function} [onProgress]
    * @returns {Promise<Array<Object>>}
    */
-  async simulateScene(scene, personas, onProgress) {
-    if (!personas || personas.length === 0) {
-      throw new Error('At least one audience persona must be selected.');
-    }
-
-    const key = apiKeyService.getKey();
-    if (!key) {
-      const err = new Error('Gemini API Key is required to run live simulation.');
-      err.code = 'MISSING_API_KEY';
-      throw err;
-    }
-
+  async simulateScene(scene, personas, onProgress = null) {
     const results = [];
-    const personaStatuses = {};
+    const total = personas.length;
 
-    personas.forEach(p => {
-      personaStatuses[p.id] = { id: p.id, name: p.name, icon: p.icon, status: 'pending' };
-    });
+    const personaStatuses = personas.reduce((acc, p) => ({
+      ...acc,
+      [p.id]: { id: p.id, name: p.name, icon: p.icon, status: 'pending' }
+    }), {});
 
-    for (let i = 0; i < personas.length; i++) {
+    for (let i = 0; i < total; i++) {
       const persona = personas[i];
-      
-      // Update status to analyzing
+
       personaStatuses[persona.id].status = 'analyzing';
-      if (onProgress) {
-        onProgress({
-          currentPersona: persona,
-          completedCount: results.length,
-          totalCount: personas.length,
-          personaStatuses: { ...personaStatuses }
-        });
-      }
+      onProgress?.({
+        completedCount: i,
+        totalCount: total,
+        currentPersona: persona,
+        personaStatuses: { ...personaStatuses },
+        partialResults: [...results]
+      });
 
       try {
-        const reaction = await this.simulateSinglePersona(scene, persona, key);
+        const reaction = await this.simulateSinglePersona(scene, persona);
         results.push(reaction);
         personaStatuses[persona.id].status = 'completed';
       } catch (err) {
-        personaStatuses[persona.id].status = 'error';
+        personaStatuses[persona.id].status = 'failed';
         personaStatuses[persona.id].error = err.message;
-        if (onProgress) {
-          onProgress({
-            currentPersona: persona,
-            completedCount: results.length,
-            totalCount: personas.length,
-            personaStatuses: { ...personaStatuses }
-          });
-        }
         throw err;
       }
 
-      if (onProgress) {
-        onProgress({
-          currentPersona: persona,
-          completedCount: results.length,
-          totalCount: personas.length,
-          personaStatuses: { ...personaStatuses }
-        });
+      onProgress?.({
+        completedCount: i + 1,
+        totalCount: total,
+        currentPersona: persona,
+        personaStatuses: { ...personaStatuses },
+        partialResults: [...results]
+      });
+
+      // Subtle breath between persona calls for visual polish
+      if (i < total - 1) {
+        await new Promise(resolve => setTimeout(resolve, 200));
       }
     }
 
@@ -419,52 +398,48 @@ export const geminiService = {
   },
 
   /**
-   * Calculates aggregated metrics from persona reactions
+   * Calculate aggregated metric scores from actual simulation responses
    * @param {Array<Object>} reactions
    * @returns {Object}
    */
   calculateAggregatedMetrics(reactions) {
     if (!reactions || reactions.length === 0) return {};
 
-    const avg = (key) => Math.round(reactions.reduce((sum, r) => sum + (r[key] || 0), 0) / reactions.length);
-
-    const tensionAvg = avg('tensionScore');
-    const impactAvg = avg('emotionalImpactScore');
-    const pacingAvg = avg('pacingScore');
-    const humorAvg = avg('humorScore');
-    const consistencyAvg = avg('consistencyScore');
-    const clarityAvg = avg('clarityScore');
+    const avg = (key) => {
+      const sum = reactions.reduce((acc, r) => acc + (r[key] || 0), 0);
+      return Math.round(sum / reactions.length);
+    };
 
     return {
       tension: {
-        score: tensionAvg,
-        label: tensionAvg >= 80 ? 'High Stakes' : tensionAvg >= 60 ? 'Moderate Tension' : 'Low Narrative Stakes',
-        description: `Average audience tension score: ${tensionAvg}/100 across ${reactions.length} viewpoints.`
+        score: avg('tensionScore'),
+        label: 'Tension & Stakes',
+        description: 'Simulated multi-perspective rating of scene dramatic suspense and stakes.'
       },
       impact: {
-        score: impactAvg,
-        label: impactAvg >= 80 ? 'Profound Impact' : impactAvg >= 60 ? 'Engaging Resonance' : 'Muted Impact',
-        description: `Audience emotional resonance evaluated at ${impactAvg}/100.`
+        score: avg('emotionalImpactScore'),
+        label: 'Emotional Impact',
+        description: 'Audience emotional resonance, character empathy, and connection.'
       },
       pacing: {
-        score: pacingAvg,
-        label: pacingAvg >= 80 ? 'Brisk & Dynamic' : pacingAvg >= 60 ? 'Steady Rhythm' : 'Pacing Stalls Detected',
-        description: `Narrative momentum and dialogue flow rated at ${pacingAvg}/100.`
+        score: avg('pacingScore'),
+        label: 'Pacing & Momentum',
+        description: 'Scene momentum, reveal cadence, and narrative rhythm.'
       },
       humor: {
-        score: humorAvg,
-        label: humorAvg >= 50 ? 'Strong Comedic Wit' : humorAvg >= 25 ? 'Subtle Levity' : 'Dramatic / Serious',
-        description: `Tone assessment and comedic relief score: ${humorAvg}/100.`
+        score: avg('humorScore'),
+        label: 'Tone & Dialogue Wit',
+        description: 'Tone calibration and character conversational sharpness.'
       },
       consistency: {
-        score: consistencyAvg,
-        label: consistencyAvg >= 80 ? 'Rock Solid Continuity' : consistencyAvg >= 60 ? 'Minor Logic Gaps' : 'Continuity Flagged',
-        description: `World logic and character motive alignment: ${consistencyAvg}/100.`
+        score: avg('consistencyScore'),
+        label: 'World Consistency',
+        description: 'Backstory logic, canon continuity, and character behavioral coherence.'
       },
       clarity: {
-        score: clarityAvg,
-        label: clarityAvg >= 80 ? 'Crystal Clear' : clarityAvg >= 60 ? 'Understandable' : 'Potential Confusion',
-        description: `Audience scene comprehension rating: ${clarityAvg}/100.`
+        score: avg('clarityScore'),
+        label: 'Scene Clarity',
+        description: 'Spatial and motivational understanding across simulated audience.'
       }
     };
   }
